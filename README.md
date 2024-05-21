@@ -15,10 +15,10 @@ This action currently supports these versions of MRI, JRuby and TruffleRuby:
 
 | Interpreter | Versions |
 | ----------- | -------- |
-| `ruby` | 1.9.3, 2.0.0, 2.1.9, 2.2, all versions from 2.3.0 until 3.3.0, head, debug, mingw, mswin, ucrt |
-| `jruby` | 9.1.17.0 - 9.4.5.0, head |
-| `truffleruby` | 19.3.0 - 23.1.2, head |
-| `truffleruby+graalvm` | 21.2.0 - 23.1.2, head |
+| `ruby` | 1.9.3, 2.0.0, 2.1.9, 2.2, all versions from 2.3.0 until 3.4.0-preview1, head, debug, mingw, mswin, ucrt |
+| `jruby` | 9.1.17.0 - 9.4.7.0, head |
+| `truffleruby` | 19.3.0 - 24.0.1, head |
+| `truffleruby+graalvm` | 21.2.0 - 24.0.1, head |
 
 `ruby-debug` is the same as `ruby-head` but with assertions enabled (`-DRUBY_DEBUG=1`).  
 
@@ -42,7 +42,7 @@ The action works on these [GitHub-hosted runners](https://docs.github.com/en/act
 
 | Operating System | Supported |
 | ---------------- | --------- |
-| Ubuntu  | `ubuntu-20.04`, `ubuntu-22.04` |
+| Ubuntu  | `ubuntu-20.04`, `ubuntu-22.04`, `ubuntu-24.04` |
 | macOS   | `macos-11`, `macos-12`, `macos-13`, `macos-14` |
 | Windows | `windows-2019`, `windows-2022` |
 
