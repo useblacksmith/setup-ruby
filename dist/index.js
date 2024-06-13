@@ -1983,7 +1983,7 @@ function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options
         let progress;
         const stallTimeout = setTimeout(() => {
             reportStall();
-        }, 600000);
+        }, 300000);
         stallTimeout.unref(); // Don't keep the process alive if the download is stalled.
         try {
             const metadataResponse = yield (0, requestUtils_1.retryHttpClientResponse)('downloadCache', () => __awaiter(this, void 0, void 0, function* () {
@@ -2008,7 +2008,7 @@ function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options
             progress = new DownloadProgress(length);
             progress.startDisplayTimer();
             const downloads = [];
-            const blockSize = 4 * 1024 * 1024;
+            const blockSize = 3 * 1024 * 1024;
             for (let offset = 0; offset < length; offset += blockSize) {
                 const count = Math.min(blockSize, length - offset);
                 downloads.push({
@@ -2049,7 +2049,9 @@ function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options
         }
         finally {
             // Stop the progress logger regardless of whether the download succeeded or failed.
-            progress.stopDisplayTimer();
+            if (progress) {
+                progress.stopDisplayTimer();
+            }
             clearTimeout(stallTimeout);
             httpClient.dispose();
             yield archiveDescriptor.close();
@@ -2059,11 +2061,11 @@ function downloadCacheHttpClientConcurrent(archiveLocation, archivePath, options
 exports.downloadCacheHttpClientConcurrent = downloadCacheHttpClientConcurrent;
 function downloadSegmentRetry(httpClient, archiveLocation, offset, count) {
     return __awaiter(this, void 0, void 0, function* () {
-        const retries = 5;
+        const retries = 3;
         let failures = 0;
         while (true) {
             try {
-                const timeout = 30000;
+                const timeout = 10000;
                 const result = yield promiseWithTimeout(timeout, downloadSegment(httpClient, archiveLocation, offset, count));
                 if (typeof result === 'string') {
                     throw new Error('downloadSegmentRetry failed due to timeout');
@@ -2075,6 +2077,9 @@ function downloadSegmentRetry(httpClient, archiveLocation, offset, count) {
                     throw err;
                 }
                 failures++;
+                // Jitter a bit before retrying
+                yield new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
+                core.info(`Retrying download segment ${offset} of ${count} (${failures} of ${retries})`);
             }
         }
     });
@@ -2428,7 +2433,7 @@ function getTarArgs(tarPath, compressionMethod, type, archivePath = '') {
                     : cacheFileName.replace(new RegExp(`\\${path.sep}`, 'g'), '/'), '-P', '-C', workingDirectory.replace(new RegExp(`\\${path.sep}`, 'g'), '/'), '--files-from', constants_1.ManifestFilename);
                 break;
             case 'extract':
-                args.push('-xf', BSD_TAR_ZSTD
+                args.push('--skip-old-files', '-xf', BSD_TAR_ZSTD
                     ? tarFile
                     : archivePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/'), '-P', '-C', workingDirectory.replace(new RegExp(`\\${path.sep}`, 'g'), '/'));
                 break;
