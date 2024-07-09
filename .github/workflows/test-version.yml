@@ -15,7 +15,7 @@ jobs:
     - name: Set up Ruby
       uses: useblacksmith/setup-ruby@v2
       with:
-        ruby-version: 3.3.3
+        ruby-version: 3.3.4
     
     - name: Verify Ruby version
       run: |
