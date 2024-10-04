@@ -3,7 +3,7 @@ name: Bump Tags on Main
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 jobs:
@@ -19,9 +19,9 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
-          git tag -fa v2 -m "Update v2 tag to latest commit on main"
-          git tag -fa v2.0.1 -m "Update v2.0.1 tag to latest commit on main"
-          git tag -fa v2.0.2 -m "Update v2.0.2 tag to latest commit on main"
+          git tag -fa v2 -m "Update v2 tag to latest commit on master"
+          git tag -fa v2.0.1 -m "Update v2.0.1 tag to latest commit on master"
+          git tag -fa v2.0.2 -m "Update v2.0.2 tag to latest commit on master"
           git push origin v2 v2.0.1 v2.0.2 --force
 
       - name: Send Slack notification on success
@@ -29,7 +29,7 @@ jobs:
         with:
           payload: |
             {
-              "text": "Updated setup-ruby v2, v2.0.1, and v2.0.2 tags to the latest commit on main"
+              "text": "Updated setup-ruby v2, v2.0.1, and v2.0.2 tags to the latest commit on master"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.CACHE_SLACK_WEBHOOK_URL }}
