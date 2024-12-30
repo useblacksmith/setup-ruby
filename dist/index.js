@@ -498,7 +498,7 @@ function isSupportedPlatform() {
     case 'macos':
       // See https://github.com/ruby/ruby-builder/blob/master/README.md#naming
       // 13 on arm64 because of old macos-arm-oss runners
-      return (os.arch() === 'x64' && parseInt(getOSVersion()) >= 12) ||
+      return (os.arch() === 'x64' && parseInt(getOSVersion()) >= 13) ||
           (os.arch() === 'arm64' && parseInt(getOSVersion()) >= 13)
     case 'windows':
       return GitHubHostedPlatforms.includes(getOSNameVersionArch())
@@ -70009,12 +70009,6 @@ async function install(platform, engine, version) {
     await downloadAndExtract(platform, engine, version, rubyPrefix)
   }
 
-  // https://github.com/oracle/truffleruby/issues/3390
-  if (engine.startsWith('truffleruby') && common.floatVersion(version) >= 24.0 && !common.isSelfHostedRunner() && common.getOSNameVersionArch() === 'macos-12-x64') {
-    console.log('Setting MACOSX_DEPLOYMENT_TARGET=11.0 to workaround bug in XCode 14.2 linker not respecting RTLD_LAZY, see https://github.com/oracle/truffleruby/issues/3390')
-    core.exportVariable('MACOSX_DEPLOYMENT_TARGET', '11.0')
-  }
-
   return rubyPrefix
 }
 
@@ -70130,8 +70124,10 @@ async function rubygemsLatest(gem, platform, engine, rubyVersion) {
     const floatVersion = common.floatVersion(rubyVersion)
     if (common.isHeadVersion(rubyVersion)) {
       console.log('Ruby master builds use included RubyGems')
-    } else if (floatVersion >= 3.0) {
+    } else if (floatVersion >= 3.1) {
       await exec.exec(gem, ['update', '--system'])
+    } else if (floatVersion >= 3.0) {
+      await exec.exec(gem, ['update', '--system', '3.5.23'])
     } else if (floatVersion >= 2.6) {
       await exec.exec(gem, ['update', '--system', '3.4.22'])
     } else if (floatVersion >= 2.3) {
@@ -86553,7 +86549,7 @@ module.exports = JSON.parse('{"application/1d-interleaved-parityfec":{"source":"
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"ruby":["1.9.3-p551","2.0.0-p648","2.1.9","2.2.10","2.3.0","2.3.1","2.3.2","2.3.3","2.3.4","2.3.5","2.3.6","2.3.7","2.3.8","2.4.0","2.4.1","2.4.2","2.4.3","2.4.4","2.4.5","2.4.6","2.4.7","2.4.9","2.4.10","2.5.0","2.5.1","2.5.2","2.5.3","2.5.4","2.5.5","2.5.6","2.5.7","2.5.8","2.5.9","2.6.0","2.6.1","2.6.2","2.6.3","2.6.4","2.6.5","2.6.6","2.6.7","2.6.8","2.6.9","2.6.10","2.7.0","2.7.1","2.7.2","2.7.3","2.7.4","2.7.5","2.7.6","2.7.7","2.7.8","3.0.0-preview1","3.0.0-preview2","3.0.0-rc1","3.0.0","3.0.1","3.0.2","3.0.3","3.0.4","3.0.5","3.0.6","3.0.7","3.1.0-preview1","3.1.0","3.1.1","3.1.2","3.1.3","3.1.4","3.1.5","3.1.6","3.2.0-preview1","3.2.0-preview2","3.2.0-preview3","3.2.0-rc1","3.2.0","3.2.1","3.2.2","3.2.3","3.2.4","3.2.5","3.2.6","3.3.0-preview1","3.3.0-preview2","3.3.0-preview3","3.3.0-rc1","3.3.0","3.3.1","3.3.2","3.3.3","3.3.4","3.3.5","3.3.6","3.4.0-preview1","3.4.0-preview2","head","debug","asan"],"jruby":["9.1.17.0","9.2.9.0","9.2.10.0","9.2.11.0","9.2.11.1","9.2.12.0","9.2.13.0","9.2.14.0","9.2.15.0","9.2.16.0","9.2.17.0","9.2.18.0","9.2.19.0","9.2.20.0","9.2.20.1","9.2.21.0","9.3.0.0","9.3.1.0","9.3.2.0","9.3.3.0","9.3.4.0","9.3.6.0","9.3.7.0","9.3.8.0","9.3.9.0","9.3.10.0","9.3.11.0","9.3.13.0","9.3.14.0","9.3.15.0","9.4.0.0","9.4.1.0","9.4.2.0","9.4.3.0","9.4.4.0","9.4.5.0","9.4.6.0","9.4.7.0","9.4.8.0","9.4.9.0","head"],"truffleruby":["19.3.0","19.3.1","20.0.0","20.1.0","20.2.0","20.3.0","21.0.0","21.1.0","21.2.0","21.2.0.1","21.3.0","22.0.0.2","22.1.0","22.2.0","22.3.0","22.3.1","23.0.0-preview1","23.0.0","23.1.0","23.1.1","23.1.2","24.0.0","24.0.1","24.0.2","24.1.0","24.1.1","head"],"truffleruby+graalvm":["21.2.0","21.3.0","22.0.0.2","22.1.0","22.2.0","22.3.0","22.3.1","23.0.0-preview1","23.0.0","23.1.0","23.1.1","23.1.2","24.0.0","24.0.1","24.0.2","24.1.0","24.1.1","head"]}');
+module.exports = JSON.parse('{"ruby":["1.9.3-p551","2.0.0-p648","2.1.9","2.2.10","2.3.0","2.3.1","2.3.2","2.3.3","2.3.4","2.3.5","2.3.6","2.3.7","2.3.8","2.4.0","2.4.1","2.4.2","2.4.3","2.4.4","2.4.5","2.4.6","2.4.7","2.4.9","2.4.10","2.5.0","2.5.1","2.5.2","2.5.3","2.5.4","2.5.5","2.5.6","2.5.7","2.5.8","2.5.9","2.6.0","2.6.1","2.6.2","2.6.3","2.6.4","2.6.5","2.6.6","2.6.7","2.6.8","2.6.9","2.6.10","2.7.0","2.7.1","2.7.2","2.7.3","2.7.4","2.7.5","2.7.6","2.7.7","2.7.8","3.0.0-preview1","3.0.0-preview2","3.0.0-rc1","3.0.0","3.0.1","3.0.2","3.0.3","3.0.4","3.0.5","3.0.6","3.0.7","3.1.0-preview1","3.1.0","3.1.1","3.1.2","3.1.3","3.1.4","3.1.5","3.1.6","3.2.0-preview1","3.2.0-preview2","3.2.0-preview3","3.2.0-rc1","3.2.0","3.2.1","3.2.2","3.2.3","3.2.4","3.2.5","3.2.6","3.3.0-preview1","3.3.0-preview2","3.3.0-preview3","3.3.0-rc1","3.3.0","3.3.1","3.3.2","3.3.3","3.3.4","3.3.5","3.3.6","3.4.0-preview1","3.4.0-preview2","3.4.0-rc1","3.4.0","3.4.1","head","debug","asan"],"jruby":["9.1.17.0","9.2.9.0","9.2.10.0","9.2.11.0","9.2.11.1","9.2.12.0","9.2.13.0","9.2.14.0","9.2.15.0","9.2.16.0","9.2.17.0","9.2.18.0","9.2.19.0","9.2.20.0","9.2.20.1","9.2.21.0","9.3.0.0","9.3.1.0","9.3.2.0","9.3.3.0","9.3.4.0","9.3.6.0","9.3.7.0","9.3.8.0","9.3.9.0","9.3.10.0","9.3.11.0","9.3.13.0","9.3.14.0","9.3.15.0","9.4.0.0","9.4.1.0","9.4.2.0","9.4.3.0","9.4.4.0","9.4.5.0","9.4.6.0","9.4.7.0","9.4.8.0","9.4.9.0","head"],"truffleruby":["19.3.0","19.3.1","20.0.0","20.1.0","20.2.0","20.3.0","21.0.0","21.1.0","21.2.0","21.2.0.1","21.3.0","22.0.0.2","22.1.0","22.2.0","22.3.0","22.3.1","23.0.0-preview1","23.0.0","23.1.0","23.1.1","23.1.2","24.0.0","24.0.1","24.0.2","24.1.0","24.1.1","head"],"truffleruby+graalvm":["21.2.0","21.3.0","22.0.0.2","22.1.0","22.2.0","22.3.0","22.3.1","23.0.0-preview1","23.0.0","23.1.0","23.1.1","23.1.2","24.0.0","24.0.1","24.0.2","24.1.0","24.1.1","head"]}');
 
 /***/ }),
 
@@ -86815,7 +86811,7 @@ function validateRubyEngineAndVersion(platform, engineVersions, engine, parsedVe
   // Well known version-platform combinations which do not work:
   if (engine === 'ruby' && platform.startsWith('macos') && os.arch() === 'arm64' && common.floatVersion(version) < 2.6) {
     throw new Error(`CRuby < 2.6 does not support macos-arm64.
-        Either use a newer Ruby version or use a macOS image running on amd64, e.g., macos-13 or macos-12.
+        Either use a newer Ruby version or use a macOS image running on amd64, e.g., macos-13.
         Note that GitHub changed the meaning of macos-latest from macos-12 (amd64) to macos-14 (arm64):
         https://github.blog/changelog/2024-04-01-macos-14-sonoma-is-generally-available-and-the-latest-macos-runner-image/
 
