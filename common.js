@@ -165,9 +165,12 @@ export async function hashFile(file) {
 const GitHubHostedPlatforms = [
   'ubuntu-20.04-x64',
   'ubuntu-22.04-x64',
+  'ubuntu-22.04-arm64',
   'ubuntu-24.04-x64',
+  'ubuntu-24.04-arm64',
   'windows-2019-x64',
   'windows-2022-x64',
+  'windows-2025-x64',
 ]
 
 // Precisely: whether we have builds for that platform and there are GitHub-hosted runners to test it
