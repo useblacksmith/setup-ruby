@@ -15,10 +15,10 @@ This action currently supports these versions of MRI, JRuby and TruffleRuby:
 
 | Interpreter | Versions |
 | ----------- | -------- |
-| `ruby` | 1.9.3, 2.0.0, 2.1.9, 2.2, all versions from 2.3.0 until 3.4.1, head, debug, mingw, mswin, ucrt |
-| `jruby` | 9.1.17.0 - 9.4.9.0, head |
-| `truffleruby` | 19.3.0 - 24.1.1, head |
-| `truffleruby+graalvm` | 21.2.0 - 24.1.1, head |
+| `ruby` | 1.9.3, 2.0.0, 2.1.9, 2.2, all versions from 2.3.0 until 3.4.2, head, debug, mingw, mswin, ucrt |
+| `jruby` | 9.1.17.0 - 9.4.12.0, head |
+| `truffleruby` | 19.3.0 - 24.1.2, head |
+| `truffleruby+graalvm` | 21.2.0 - 24.1.2, head |
 
 `ruby-debug` is the same as `ruby-head` but with assertions enabled (`-DRUBY_DEBUG=1`).
 
@@ -46,7 +46,7 @@ The action works on these [GitHub-hosted runners](https://docs.github.com/en/act
 
 | Operating System | Supported |
 | ---------------- | --------- |
-| Ubuntu  | `ubuntu-20.04`, `ubuntu-22.04`, `ubuntu-24.04` |
+| Ubuntu  | `ubuntu-20.04`, `ubuntu-22.04`, `ubuntu-24.04`, `ubuntu-22.04-arm`, `ubuntu-24.04-arm` |
 | macOS   | `macos-13` and newer versions |
 | Windows | `windows-2019`, `windows-2022` |
 
@@ -74,7 +74,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.3' # Not needed with a `.ruby-version` or `.tool-versions`
+        ruby-version: '3.3' # Not needed with a .ruby-version, .tool-versions or mise.toml
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - run: bundle exec rake
 ```
@@ -139,11 +139,12 @@ and the [condition and expression syntax](https://help.github.com/en/actions/ref
 * engine only like `ruby` and `truffleruby`, uses the latest stable release of that implementation
 * `.ruby-version` reads from the project's `.ruby-version` file
 * `.tool-versions` reads from the project's `.tool-versions` file
-* If the `ruby-version` input is not specified, `.ruby-version` is tried first, followed by `.tool-versions`
+* `mise.toml` reads from the project's `mise.toml` file
+* If the `ruby-version` input is not specified, `.ruby-version` is tried first, followed by `.tool-versions`, followed by `mise.toml`
 
 ### Working Directory
 
-The `working-directory` input can be set to resolve `.ruby-version`, `.tool-versions` and `Gemfile.lock`
+The `working-directory` input can be set to resolve `.ruby-version`, `.tool-versions`, `mise.toml` and `Gemfile.lock`
 if they are not at the root of the repository, see [action.yml](action.yml) for details.
 
 ### RubyGems
