@@ -15,7 +15,7 @@ This action currently supports these versions of MRI, JRuby and TruffleRuby:
 
 | Interpreter | Versions |
 | ----------- | -------- |
-| `ruby` | 1.9.3, 2.0.0, 2.1.9, 2.2, all versions from 2.3.0 until 3.4.2, head, debug, mingw, mswin, ucrt |
+| `ruby` | 1.9.3, 2.0.0, 2.1.9, 2.2, all versions from 2.3.0 until 3.4.3, head, debug, mingw, mswin, ucrt |
 | `jruby` | 9.1.17.0 - 9.4.12.0, head |
 | `truffleruby` | 19.3.0 - 24.1.2, head |
 | `truffleruby+graalvm` | 21.2.0 - 24.1.2, head |
@@ -181,8 +181,8 @@ This action provides a way to automatically run `bundle install` and cache the r
 
 Note that any step doing `bundle install` (for the root `Gemfile`) or `gem install bundler` can be removed with `bundler-cache: true`.
 
-This caching speeds up installing gems significantly and avoids too many requests to RubyGems.org.  
-It needs a `Gemfile` (or `$BUNDLE_GEMFILE` or `gems.rb`) under the [`working-directory`](#working-directory).  
+This caching speeds up installing gems significantly and avoids too many requests to RubyGems.org.
+It needs a `Gemfile` (or `$BUNDLE_GEMFILE` or `gems.rb`) under the [`working-directory`](#working-directory).
 If there is a `Gemfile.lock` (or `$BUNDLE_GEMFILE.lock` or `gems.locked`), `bundle config --local deployment true` is used.
 
 To use a `Gemfile` which is not at the root or has a different name, set `BUNDLE_GEMFILE` in the `env` at the job level
@@ -196,7 +196,7 @@ They should be set in the `env` at the job level as shown in the [example](#matr
 To find the correct the environment variable name, see the [Bundler docs](https://bundler.io/man/bundle-config.1.html) or look at `.bundle/config` after running `bundle config --local KEY VALUE` locally.
 You might need to `"`-quote the environment variable name in YAML if it has unusual characters like `/`.
 
-To perform caching, this action will use `bundle config --local path $PWD/vendor/bundle`.  
+To perform caching, this action will use `bundle config --local path $PWD/vendor/bundle`.
 Therefore, the Bundler `path` should not be changed in your workflow for the cache to work (no `bundle config path`).
 
 #### How it Works
