@@ -8,21 +8,21 @@ on:
 jobs:
   test:
     runs-on: blacksmith-staging
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Set up Ruby
       uses: useblacksmith/setup-ruby@v2
       with:
-        ruby-version: 3.4.2
-    
+        ruby-version: 3.4.3
+
     - name: Verify Ruby version
       run: |
         installed_version=$(ruby -v | cut -d' ' -f2)
-        if [ "$installed_version" = "3.4.2" ]; then
+        if [ "$installed_version" = "3.4.3" ]; then
           echo "Ruby version is correct: $installed_version"
         else
-          echo "Ruby version is incorrect. Expected 3.4.2, but got $installed_version"
+          echo "Ruby version is incorrect. Expected 3.4.3, but got $installed_version"
           exit 1
         fi
