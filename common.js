@@ -6,6 +6,7 @@ const stream = require('stream')
 const crypto = require('crypto')
 const core = require('@actions/core')
 const tc = require('@actions/tool-cache')
+const exec = require('@actions/exec')
 const { performance } = require('perf_hooks')
 const linuxOSInfo = require('linux-os-info')
 
@@ -66,7 +67,8 @@ export async function time(name, block) {
 }
 
 export function isHeadVersion(rubyVersion) {
-  return ['head', 'debug',  'mingw', 'mswin', 'ucrt', 'asan'].includes(rubyVersion)
+  // 3.4-asan counts as "head" because the version cannot be selected -- you can only get whatever's latest
+  return ['head', 'debug',  'mingw', 'mswin', 'ucrt', 'asan', '3.4-asan'].includes(rubyVersion)
 }
 
 export function isStableVersion(engine, rubyVersion) {
@@ -128,6 +130,8 @@ export function targetRubyVersion(engine, rubyVersion) {
       return 2.5
     } else if (version === 9.3) {
       return 2.6
+    } else if (version === 9.4) {
+      return 3.1
     }
   } else if (engine.startsWith('truffleruby')) {
     if (version < 21.0) {
@@ -136,6 +140,10 @@ export function targetRubyVersion(engine, rubyVersion) {
       return 2.7
     } else if (version < 23.0) {
       return 3.0
+    } else if (version < 23.1) {
+      return 3.1
+    } else if (version < 24.2) {
+      return 3.2
     }
   }
 
@@ -395,4 +403,36 @@ export function setupPath(newPathEntries) {
 
   core.addPath(newPath.join(path.delimiter))
   return msys2Type
+}
+
+export async function setupJavaHome(rubyPrefix) {
+  await measure("Modifying JAVA_HOME for JRuby", async () => {
+    console.log("attempting to run with existing JAVA_HOME")
+
+    const javaHome = process.env['JAVA_HOME']
+    let java = javaHome ? path.join(javaHome, 'bin/java') : 'java'
+    let ret = await exec.exec(java, ['-jar', path.join(rubyPrefix, 'lib/jruby.jar'), '--version'], {ignoreReturnCode: true})
+
+    if (ret === 0) {
+      console.log("JRuby successfully starts, using existing JAVA_HOME")
+    } else {
+      console.log("JRuby failed to start, try Java 21 envs")
+
+      let arch = os.arch()
+      if (arch === "x64" || os.platform() !== "darwin") {
+        arch = "X64"
+      }
+
+      let newHomeVar = `JAVA_HOME_21_${arch}`
+      let newHome = process.env[newHomeVar]
+
+      if (newHome === "undefined") {
+        throw new Error(`JAVA_HOME is not Java 21+ needed for JRuby and \$${newHomeVar} is not defined`)
+      }
+
+      console.log(`Setting JAVA_HOME to ${newHomeVar} path ${newHome}`)
+
+      core.exportVariable("JAVA_HOME", newHome)
+    }
+  })
 }
