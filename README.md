@@ -16,9 +16,9 @@ This action currently supports these versions of MRI, JRuby and TruffleRuby:
 | Interpreter | Versions |
 | ----------- | -------- |
 | `ruby` | 1.9.3, 2.0.0, 2.1.9, 2.2, all versions from 2.3.0 until 3.5.0-preview1, head, debug, mingw, mswin, ucrt |
-| `jruby` | 9.1.17.0 - 10.0.0.0, head |
-| `truffleruby` | 19.3.0 - 24.2.0, head |
-| `truffleruby+graalvm` | 21.2.0 - 24.2.0, head |
+| `jruby` | 9.1.17.0 - 10.0.0.1, head |
+| `truffleruby` | 19.3.0 - 24.2.1, head |
+| `truffleruby+graalvm` | 21.2.0 - 24.2.1, head |
 
 `ruby-debug` is the same as `ruby-head` but with assertions enabled (`-DRUBY_DEBUG=1`).
 
@@ -49,9 +49,9 @@ The action works on these [GitHub-hosted runners](https://docs.github.com/en/act
 
 | Operating System | Supported |
 | ---------------- | --------- |
-| Ubuntu  | `ubuntu-20.04`, `ubuntu-22.04`, `ubuntu-24.04`, `ubuntu-22.04-arm`, `ubuntu-24.04-arm` |
+| Ubuntu  | `ubuntu-22.04`, `ubuntu-24.04`, `ubuntu-22.04-arm`, `ubuntu-24.04-arm` |
 | macOS   | `macos-13` and newer versions |
-| Windows | `windows-2019`, `windows-2022` |
+| Windows | `windows-2019`, `windows-2022`, `windows-2025`, `windows-11-arm` |
 
 Not all combinations of runner images and versions are supported.
 The list of available Ruby versions can be seen in [ruby-builder-versions.json](ruby-builder-versions.json) for Ubuntu and macOS
@@ -119,7 +119,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gemfile: [ rails5, rails6 ]
+        gemfile: [ rails7, rails8 ]
     runs-on: ubuntu-latest
     env: # $BUNDLE_GEMFILE must be set at the job level, so it is set for all steps
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Download a prebuilt Ruby and add it to the PATH in 5 seconds",
   "main": "index.js",
+  "license": "MIT",
   "scripts": {
     "package": "ncc build index.js -o dist"
   },
@@ -16,7 +17,6 @@
     "Ruby"
   ],
   "author": "Benoit Daloze",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ruby/setup-ruby/issues"
   },
@@ -25,12 +25,13 @@
     "@actions/cache": "npm:@useblacksmith/cache@3.2.213",
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
-    "@actions/io": "^1.1.2",
+    "@actions/io": "^1.1.3",
     "@actions/tool-cache": "^2",
     "linux-os-info": "^2.0.0",
-    "semver": "^7.3.7"
+    "semver": "^7.7.2"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.33.4"
-  }
+    "@vercel/ncc": "^0.38.3"
+  },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }
